@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>북리뷰 - 상세 정보</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 40px; }
+        .detail-container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .book-info { display: flex; gap: 30px; margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 30px; }
+        .book-info img { width: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .book-details h2 { margin-top: 0; color: #2c3e50; }
+        .review-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .no-review { color: #888; font-style: italic; }
+        #book-description{ display : block; margin-top:15px; line-height: 1.8; color:#444; white-space: pre-wrap; text-align : justify; }
+    </style>
+</head>
+<body>
+
+<div class="detail-container">
+    <div class="book-info" id="bookInfo">
+        <img id="book-cover" src="" alt="책 표지">
+        <div class="book-details">
+            <h2 id="book-title">로딩 중...</h2>
+            <p><strong>저자:</strong> <span id="book-author"></span></p>
+            <p><strong>출판사:</strong> <span id="book-publisher"></span></p>
+            <p><span id="book-description"></span></p>
+        </div>
+    </div>
+
+    <h3>평균 평점: <span id="avgRating">0.0</span> / 5.0</h3>
+    <hr>
+    <h4>독자 리뷰</h4>
+    <div id="reviewList">
+        <p>리뷰를 불러오는 중입니다...</p>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('bookId');
+
+        if (bookId) {
+            loadBookDetail(bookId);
+            loadReviews(bookId);
+        } else {
+            alert("잘못된 접근입니다.");
+            window.location.href = 'index.html';
+        }
+    });
+
+    function loadBookDetail(bookId) {
+        $.ajax({
+            url: `/api/books/${bookId}`,
+            method: "GET",
+            success: function(book) {
+                $('#book-title').text(book.title);
+                $('#book-author').text(book.author);
+                $('#book-publisher').text(book.publisher);
+                $('#book-description').text(book.description);
+                $('#book-cover').attr('src', book.coverUrl || 'https://via.placeholder.com/200x300');
+            },
+            error: function() {
+                alert("책 정보를 불러오는 데 실패했습니다.");
+            }
+        });
+    }
+
+    function loadReviews(bookId) {
+        $.ajax({
+            url: `/api/reviews/book/${bookId}`,
+            method: "GET",
+            success: function(reviews) {
+                const reviewList = $('#reviewList'); // HTML의 id와 맞춤
+                reviewList.empty();
+
+                if (!reviews || reviews.length === 0) {
+                    reviewList.append('<p class="no-review">아직 작성된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>');
+                    $('#avgRating').text("0.0");
+                    return;
+                }
+
+                let totalRating = 0;
+                reviews.forEach(review => {
+                    totalRating += review.rating;
+                    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                    const userName = review.user ? review.user.nickname : '익명 독자';
+
+                // 새 코드
+                const $item = $('<div>').addClass('review-item');
+                const $header = $('<div>').addClass('review-header');
+                const $name = $('<strong>').text(userName);
+                const $stars = $('<span style="color: #f1c40f;">').text(stars).addClass('review-stars');
+                const $content = $('<p>').text(review.content);
+
+                $header.append($name, $stars);
+                $item.append($header, $content);
+                reviewList.append($item);
+                // 엔티티 필드명인 'nickname'을 정확히 가리킵니다.
+
+
+
+                });
+
+                // 평균 평점 계산 및 표시
+                const avg = (totalRating / reviews.length).toFixed(1);
+                $('#avgRating').text(avg);
+            },
+            error: function(err) {
+                $('#reviewList').html('<p style="color:red;">리뷰 로딩 중 오류가 발생했습니다.</p>');
+            }
+        });
+    }
+</script>
+</body>
+</html>

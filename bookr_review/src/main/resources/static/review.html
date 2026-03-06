@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>리뷰 작성 - Bookr</title>
+  <style>
+    /* 1. 기본 스타일 리셋 및 배경 */
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* 2. 카드 컨테이너 */
+    .review-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1a1a1a;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    /* 3. 입력 폼 스타일 */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+
+    input[readonly] {
+      background-color: #f9fafb;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4A90E2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    /* 4. 별점 라디오 스타일 (매우 중요) */
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      gap: 8px;
+      font-size: 32px;
+    }
+
+    .star-rating input { display: none; }
+
+    .star-rating label {
+      color: #d1d5db;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: #fbbf24;
+    }
+
+    /* 5. 버튼 스타일 */
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #4A90E2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #357ABD;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="review-container">
+  <h2>📝 리뷰 남기기</h2>
+  <form id="reviewForm">
+    <div class="form-group" style="display: none;">
+      <label>유저 ID</label>
+      <input type="number" id="userId" readonly>
+    </div>
+
+    <div class="form-group">
+      <label>책 번호</label>
+      <input type="number" id="bookId" readonly>
+    </div>
+
+    <div class="form-group">
+      <label>별점</label>
+      <div class="star-rating">
+        <input type="radio" id="5-stars" name="rating" value="5" checked>
+        <label for="5-stars">★</label>
+        <input type="radio" id="4-stars" name="rating" value="4">
+        <label for="4-stars">★</label>
+        <input type="radio" id="3-stars" name="rating" value="3">
+        <label for="3-stars">★</label>
+        <input type="radio" id="2-stars" name="rating" value="2">
+        <label for="2-stars">★</label>
+        <input type="radio" id="1-star" name="rating" value="1">
+        <label for="1-star">★</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="title">리뷰 제목</label>
+      <input type="text" id="title" placeholder="한 줄 평이나 제목을 적어주세요" required>
+    </div>
+
+    <div class="form-group">
+      <label for="content">리뷰 내용</label>
+      <textarea id="content" rows="6" placeholder="책에 대한 소중한 의견을 들려주세요."></textarea>
+    </div>
+
+    <button type="submit">리뷰 등록 완료</button>
+    <a href="index.html" class="back-link">돌아가기</a>
+  </form>
+</div>
+
+<script>
+  // 1. 유저 정보 및 URL 파라미터 처리
+  const userData = JSON.parse(sessionStorage.getItem('user'));
+  const urlParams = new URLSearchParams(window.location.search);
+  const bookIdFromUrl = urlParams.get('bookId');
+
+  // 로그인된 유저 ID 설정
+  if (userData) {
+    // 백엔드에서 준 ID 필드명(userId 또는 id)에 맞춰 자동 입력
+    document.getElementById('userId').value = userData.userId || userData.id;
+  } else {
+    alert("로그인이 필요합니다.");
+    location.href = 'login.html';
+  }
+
+  // 책 ID 자동 설정
+  if (bookIdFromUrl) {
+    document.getElementById('bookId').value = bookIdFromUrl;
+  }
+
+  // 2. 폼 제출 로직
+  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const selectedRating = document.querySelector('input[name="rating"]:checked').value;
+
+    const data = {
+      user: { userId: document.getElementById('userId').value },
+      book: { bookId: document.getElementById('bookId').value },
+      rating: selectedRating,
+      content: document.getElementById('content').value
+    };
+
+    fetch('/api/reviews/write', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+            .then(response => response.text())
+            .then(msg => {
+              alert(msg);
+              location.href = 'account-settings.html'; // 등록 후 마이페이지로 이동
+            })
+            .catch(err => alert('에러가 발생했습니다. 다시 시도해주세요.'));
+  });
+</script>
+</body>
+</html>

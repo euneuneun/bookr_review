@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>북리뷰 - 로그인</title>
+    <style>
+        /* 기본 배경 설정 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* 로그인 카드 박스 */
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        /* 입력창 스타일 */
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box; /* 패딩이 너비에 포함되게 함 */
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        /* 버튼 스타일 */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #357ABD;
+        }
+
+        /* 링크 스타일 */
+        .footer-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .footer-link a {
+            color: #4A90E2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Bookr 로그인</h2>
+    <form id="loginForm">
+        <div class="input-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" placeholder="example@mail.com" required>
+        </div>
+        <div class="input-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+        </div>
+        <button type="submit" id="loginBtn">로그인</button>
+    </form>
+    <div class="footer-link">
+        계정이 없으신가요? <a href="join.html">회원가입</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('loginBtn');
+        btn.innerText = '로그인 중...';
+        btn.disabled = true;
+
+        const data = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        fetch('/api/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json()) // JSON이 아닌 텍스트로 먼저 받습니다.
+            .then(user => {
+                // 1. 서버가 보내준 user 객체를 세션에서 저장 (이제 userId가 포함됩니다!)
+                sessionStorage.setItem('user', JSON.stringify(user));
+
+                // 2. 알림창에는 닉네임만 예쁘게 보여줍니다.
+                alert(`${user.nickname}님, 환영합니다!`);
+
+                // 3. 메인 페이지로 이동
+                location.href = 'index.html';
+            })
+            .catch(err => {
+                alert('서버 에러가 발생했습니다.');
+                btn.innerText = '로그인';
+                btn.disabled = false;
+            });
+    });
+
+</script>
+
+</body>
+</html>

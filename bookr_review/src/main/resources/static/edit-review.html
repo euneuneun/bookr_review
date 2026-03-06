@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 수정</title>
+    <style>
+        body {
+        font-family: 'Pretendard', sans-serif;
+        background : #f4f7f6;
+        display : flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin :0;
+        }
+        .edit-container{
+        background : white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width : 450px; }
+
+        .book-info {
+        background: #9ecef;
+        padding : 15px;
+        border-radius: 8px;
+        margin-bottom : 20px;
+        text-align :center;}
+
+        .form-group {
+        margin-bottom : 15px;}
+
+        label {
+        display : block;
+        margin-bottom : 8px;
+        font-weight : bold;
+        color : #555;}
+
+        select, textarea {
+        width : 100%;
+        padding: 12px;
+        border : 1px;
+        solid : #ddd;
+        border-radius : 6px;
+        box-sizing: border-box;
+        font-size : 16px;}
+
+        textarea{
+        height : 150px;
+        resize : none;}
+
+        .btn-group{
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;}
+
+        .save-btn {
+        flex : 2;
+        background: #4A90E2;
+        color : white;
+        border : none;
+        padding: 12px;
+        border-radius : 6px;
+        cursor: pointer;
+        font-size : 16px;
+        font-weight : bold;}
+
+        .cancel-btn{
+        flex : 1;
+        background:#adb4bd;
+        color: white;
+        border: none;
+        padding : 12px;
+        border-radius: 6px;
+        cursor : pointer; }
+        .save-btn:hover{background: #357ABD;}
+
+        /* 리뷰 카드 레이아웃 보정 */
+.review-card {
+    position: relative; /* 점 3개 버튼의 기준점 */
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 점 3개 버튼 스타일 */
+.menu-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    padding: 5px;
+    line-height: 1;
+}
+
+.menu-btn:hover {
+    color: #333;
+}
+
+/* 드롭다운 메뉴 (기본 숨김) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+    min-width: 100px;
+    overflow: hidden;
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-menu button:hover {
+    background: #f4f7f6;
+}
+
+.delete-btn {
+    color: #e74c3c; /* 삭제는 빨간색 */
+}
+
+/* 메뉴 보이기 클래스 */
+.show {
+    display: block;
+}
+    </style>
+
+</head>
+<body>
+
+<div class="edit-container">
+    <h2> 리뷰 수정</h2>
+    <div class="book-info">
+        <strong id="displayBookTitle">책 제목 불러오는 중...</strong>
+    </div>
+
+    <form id ="editReviewForm">
+        <div class="form-group">
+            <label>리뷰 제목</label>
+            <input type="text" id="reviewTitle" placeholder="리뷰 제목을 입력하세요." required
+                   style="width: 100%; padding:12px; border: 1px solid #ddd; border-radius:6px; box-sizing: border-box; font-size : 16px; margin-bottom : 15px"
+        </div>
+        <div class="form-group">
+            <label>별점</label>
+            <select id="reviewRating">
+                <option value="5">⭐⭐⭐⭐⭐ (5점)</option>
+                <option value="4">⭐⭐⭐⭐ (4점)</option>
+                <option value="3">⭐⭐⭐ (3점)</option>
+                <option value="2">⭐⭐ (2점)</option>
+                <option value="1">⭐ (1점)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>리뷰 내용</label>
+            <textarea id="reviewContent" placeholder="책에 대한 생각을 자유롭게 적어주세요." required></textarea>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+            <button type="submit" class="save-btn">수정 완료</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 1. url에서 리뷰 id 추출 ( 예: edit-review.html?id=12)
+    const urlParams = new URLSearchParams(window.location.search);
+    const reviewId = urlParams.get('id');
+
+
+    if (!reviewId){
+        alert("잘못된 접근입니다.");
+        location.href = 'account-settings.html';
+    }
+
+    // 2. 기존 리뷰 데이터 불러오기
+    document.addEventListener('DOMContentLoaded',async () => {
+    try {
+        const res = await fetch(`/api/reviews/${reviewId}`);
+        if (!res.ok) throw new Error("리뷰 정보를 가져오는데 실패했습니다.");
+
+    const review = await res.json();
+
+    // 데이터 채워넣기
+    document.getElementById('displayBookTitle').innerText = review.book.title;
+    document.getElementById('reviewTitle').value = review.title || "";
+    document.getElementById('reviewRating').value = review.rating;
+    document.getElementById('reviewContent').value = review.content;
+} catch (err) {
+    alert(err.message);
+    history.back();
+}
+});
+
+// 3. 수정 요청 보내기
+
+document.getElementById('editReviewForm').addEventListener('submit', async(e) => {
+    e.preventDefault();
+
+    const updateData = {
+        title : document.getElementById('reviewTitle').value,
+        rating : document.getElementById('reviewRating').value,
+        content : document.getElementById('reviewContent').value
+    };
+
+    try {
+        const res = await fetch(`/api/reviews/${reviewId}`, {
+            method : 'PUT',
+            headers : { 'Content-Type' : 'application/json'},
+            body : JSON.stringify(updateData)
+        });
+
+        if (res.ok) {
+            alert("리뷰가 수정되었습니다!");
+            location.href = 'account-settings.html'; // 마이페이지로 복귀
+        } else{
+            const errorMsg = await res.text();
+            alert("수정 실패 " + errorMsg);
+        }
+    } catch (err){
+        alert("네트워크 오류가 발생했습니다.");
+    }
+    });
+
+</script>
+
+
+</body>
+</html>

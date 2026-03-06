@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>내 리뷰 목록</title>
+  <style>
+    /* 버튼을 잘 보이게 하는 스타일 */
+    .edit-btn {
+        background-color: #4A90E2;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .edit-btn:hover { background-color: #357ABD; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+    th { background-color: #f8f9fa; }
+  </style>
+</head>
+<body>
+
+<h2>내가 쓴 리뷰 목록</h2>
+
+<div id="reviewList">
+  <table>
+    <thead>
+    <tr>
+      <th>책 제목</th>
+      <th>별점</th>
+      <th>리뷰 내용</th>
+      <th>작성일</th>
+      <th>관리</th> </tr>
+    </thead>
+    <tbody id="resultBody">
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // 1. 세션에서 로그인 정보 가져오기
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const userId = user ? (user.userId || user.id) : null;
+
+  if (!userId) {
+      alert("로그인이 필요한 서비스입니다.");
+  } else {
+      // 2. 서버에서 데이터 가져와서 표 만들기
+      fetch(`/api/reviews/my/${userId}`)
+          .then(res => res.json())
+          .then(reviews => {
+              const body = document.getElementById('resultBody');
+              body.innerHTML = ''; // 초기화
+
+              reviews.forEach(review => {
+                  const bookTitle = review.book ? review.book.title : "제목 없음";
+
+                  // 3. 행(row)을 만들면서 마지막 칸에 <button>을 강제로 넣습니다.
+                  const row = `
+                      <tr>
+                          <td><strong>${bookTitle}</strong></td>
+                          <td style="color: #fbbf24;">${'★'.repeat(review.rating)}</td>
+                          <td>${review.content}</td>
+                          <td>${new Date(review.createdAt).toLocaleDateString()}</td>
+                          <td>
+                              <button class="edit-btn" onclick="editReview(${review.reviewId}, '${review.title}', '${review.content}', ${review.rating})">
+                                  수정하기
+                              </button>
+                          </td>
+                      </tr>
+                  `;
+                  body.innerHTML += row;
+              });
+          })
+          .catch(err => console.error("데이터 로드 실패:", err));
+  }
+
+  // 4. 수정 버튼 클릭 시 실행될 함수
+  function editReview(id, oldTitle, oldContent, oldRating) {
+      const newTitle = prompt("수정할 제목을 입력하세요:", oldTitle);
+      const newContent = prompt("수정할 내용을 입력하세요:", oldContent);
+      const newRating = prompt("수정할 별점을 입력하세요 (1~5):", oldRating);
+
+      if (!newTitle || !newContent || !newRating) return;
+
+      const updateData = {
+          title: newTitle,
+          content: newContent,
+          rating: parseInt(newRating)
+      };
+
+      fetch(`/api/reviews/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updateData)
+      })
+      .then(res => {
+          if(res.ok) {
+              alert("성공적으로 수정되었습니다!");
+              location.reload();
+          } else {
+              alert("수정에 실패했습니다.");
+          }
+      });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 테스트</title>
+</head>
+<body>
+<h2>회원가입</h2>
+<form id="joinForm">
+    이메일: <input type="email" id="email" required><br>
+    비밀번호: <input type="password" id="password" required><br>
+    닉네임: <input type="text" id="nickname" required><br>
+    <button type="submit">가입하기</button>
+</form>
+
+<script>
+    document.getElementById('joinForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // 페이지 새로고침 방지
+
+        const data = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            nickname: document.getElementById('nickname').value
+        };
+
+        // 우리가 만든 UserController의 /api/users/join으로 데이터를 보냅니다.
+        fetch('/api/users/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.text())
+            .then(msg => alert(msg))
+            .catch(err => alert('에러 발생!'));
+    });
+</script>
+</body>
+</html>
