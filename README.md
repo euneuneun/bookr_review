@@ -56,4 +56,5 @@ bookr_review는 사용자가 읽은 책에 대해 평점과 리뷰를 남기고,
 - 해결: 부모 요소(reviewList)를 루프 밖에서 변수로 참조하고, .empty()와 .append()를 적절히 배치하여 브라우저 렌더링 비용 최적화
 
 ## ERD
+<img width="915" height="641" alt="image" src="https://github.com/user-attachments/assets/b465c926-1a1b-4948-aafc-aca2bb0c586e" />
 
