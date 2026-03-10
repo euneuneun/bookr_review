@@ -17,10 +17,10 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PostMapping("/write")
-    public String write(@RequestBody Review review) {
+    @PostMapping
+    public ResponseEntity<String> write(@RequestBody Review review) {
         reviewService.writeReview(review);
-        return "리뷰가 성공적으로 등록되었습니다!";
+        return ResponseEntity.status(201).body("리뷰가 성공적으로 등록되었습니다!");
     }
 
     // ReviewController.java 안에 추가
@@ -36,14 +36,16 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public String update(@PathVariable Long reviewId, @RequestBody Review review) {
+    public ResponseEntity<String> update(@PathVariable Long reviewId, @RequestBody Review review) {
         reviewService.updateReview(reviewId, review.getTitle(), review.getContent(), review.getRating());
-        return "리뷰가 수정되었습니다!";
+        return ResponseEntity.ok("리뷰가 수정되었습니다!");
     }
 
-    @GetMapping("/{id}")
     public ResponseEntity<Review> getReview(@PathVariable Long id) {
         Review review = reviewService.findById(id);
+        if (review == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(review);
     }
 }

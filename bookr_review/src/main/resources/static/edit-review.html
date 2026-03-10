@@ -152,17 +152,18 @@
 <body>
 
 <div class="edit-container">
-    <h2> 리뷰 수정</h2>
+    <h2>리뷰 수정</h2>
     <div class="book-info">
         <strong id="displayBookTitle">책 제목 불러오는 중...</strong>
     </div>
 
-    <form id ="editReviewForm">
+    <form id="editReviewForm">
         <div class="form-group">
             <label>리뷰 제목</label>
             <input type="text" id="reviewTitle" placeholder="리뷰 제목을 입력하세요." required
-                   style="width: 100%; padding:12px; border: 1px solid #ddd; border-radius:6px; box-sizing: border-box; font-size : 16px; margin-bottom : 15px"
+                   style="width: 100%; padding:12px; border: 1px solid #ddd; border-radius:6px; box-sizing: border-box; font-size : 16px; margin-bottom : 15px">
         </div>
+
         <div class="form-group">
             <label>별점</label>
             <select id="reviewRating">
@@ -173,10 +174,12 @@
                 <option value="1">⭐ (1점)</option>
             </select>
         </div>
+
         <div class="form-group">
             <label>리뷰 내용</label>
             <textarea id="reviewContent" placeholder="책에 대한 생각을 자유롭게 적어주세요." required></textarea>
         </div>
+
         <div class="btn-group">
             <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
             <button type="submit" class="save-btn">수정 완료</button>

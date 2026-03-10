@@ -106,7 +106,7 @@
 
   // 2. 전체 책 목록 가져오기
   function loadAllBooks() {
-    fetch('/api/books/all')
+    fetch('/api/books')
             .then(response => response.json())
             .then(books => displayBooks(books))
             .catch(err => console.error('데이터 호출 에러:', err));
