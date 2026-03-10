@@ -96,6 +96,43 @@
 
         .no-review { text-align: center; color: var(--text-sub); padding: 40px 0; }
 
+        /* 좋아요 버튼 스타일 */
+    .btn-like {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        background: var(--white);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .btn-like:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: #fda4af;
+    }
+
+    /* 하트가 활성화되었을 때 (빨간 하트) */
+    .btn-like.active {
+        background-color: #fff1f2;
+        border-color: #fda4af;
+        color: #e11d48;
+    }
+
+    #heartIcon {
+        font-size: 1.2rem;
+        transition: transform 0.3s;
+    }
+
+    .btn-like.active #heartIcon {
+        transform: scale(1.2);
+    }
         @media (max-width: 768px) {
             .book-hero { flex-direction: column; align-items: center; text-align: center; }
             .book-hero img { width: 180px; }
@@ -117,6 +154,12 @@
             <h2 id="book-title">로딩 중...</h2>
             <div class="book-meta">
                 <span id="book-author"></span> · <span id="book-publisher"></span>
+                <div class="actions" style="margin-top: 20px;">
+                    <button id="likeBtn" class="btn-like">
+                        <span id="heartIcon">🤍</span>
+                        <span id="likeText">좋아요</span>
+                    </button>
+                </div>
             </div>
             <div class="description-box" id="book-description">
                 내용을 불러오고 있습니다.
@@ -157,8 +200,55 @@
             alert("잘못된 접근입니다.");
             window.location.href = 'index.html';
         }
+
+        // 좋아요 버튼 클릭 이벤트
+    $('#likeBtn').on('click', function() {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+
+        if (!user) {
+            alert('로그인이 필요한 서비스입니다.');
+            window.location.href = 'login.html'; // 로그인 페이지 경로에 맞게 수정
+            return;
+        }
+
+        const userId = user.user_id; // 세션에 저장된 유저 PK
+
+        $.ajax({
+            url: `/api/hearts/${bookId}?userId=${userId}`,
+            method: "POST",
+            success: function(isHearted) {
+                updateLikeUI(isHearted);
+
+                // 간단한 피드백 알림
+                if (isHearted) {
+                    console.log("좋아요 완료");
+                } else {
+                    console.log("좋아요 취소");
+                }
+            },
+            error: function() {
+                alert("좋아요 처리 중 오류가 발생했습니다.");
+            }
+        });
+    });
     });
 
+    // UI 상태를 변경하는 함수
+    function updateLikeUI(isHearted) {
+        const btn = $('#likeBtn');
+        const icon = $('#heartIcon');
+        const text = $('#likeText');
+
+        if (isHearted) {
+            btn.addClass('active');
+            icon.text('❤️');
+            text.text('좋아요 취소');
+        } else {
+            btn.removeClass('active');
+            icon.text('🤍');
+            text.text('좋아요');
+        }
+    }
     function loadBookDetail(bookId) {
         $.ajax({
             url: `/api/books/${bookId}`,
