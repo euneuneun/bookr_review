@@ -2,7 +2,7 @@
 Spring Boot와 JPA를 활용한 도서 정보 조회 및 독자 리뷰 관리 서비스
 
 ## 📅 기간
-- 2026.02.15 ~ 2026.03.09
+- 2026.02.01 ~ 2026.03.09
 
 ## 📝 목차
  1. 주제
@@ -26,9 +26,13 @@ bookr_review는 사용자가 읽은 책에 대해 평점과 리뷰를 남기고,
 
 #### 도서 상세 정보 조회
 - API를 통해 도서의 표지, 제목, 저자, 상세 설명을 실시간으로 불러옵니다.
+<img width="1891" height="903" alt="image" src="https://github.com/user-attachments/assets/763a3da6-38e4-4fd4-a7a6-2dc6a0cf58f9" />
+
 
 #### 독자 리뷰 및 별점 시스템
 - 각 도서별로 사용자들이 남긴 리뷰 리스트를 조회하고, 전체 평균 평점을 계산하여 표시합니다.
+<img width="935" height="897" alt="image" src="https://github.com/user-attachments/assets/3551efaf-ce22-4436-ba75-d6c9e31ee920" />
+
 
 
 ## 3. 시스템 아키텍쳐
@@ -62,6 +66,7 @@ bookr_review는 사용자가 읽은 책에 대해 평점과 리뷰를 남기고,
 
 
 ## 6. ERD
-<img width="893" height="630" alt="Untitled" src="https://github.com/user-attachments/assets/8001c4f4-69c2-459f-9ff4-b2cc2d6b54f7" />
+<img width="983" height="630" alt="Untitled (1)" src="https://github.com/user-attachments/assets/d2b72d69-35c5-46a9-9272-fb5f1c5e6785" />
+
 
 
