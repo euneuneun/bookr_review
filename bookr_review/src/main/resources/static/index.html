@@ -2,234 +2,236 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>책리뷰 - 메인</title>
+  <title>📚 BookReview - 당신의 문장을 공유하세요</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-    .header { text-align: center; margin-bottom: 40px; }
+    :root {
+      --primary-color: #4f46e5; /* 세련된 인디고 블루 */
+      --secondary-color: #6366f1;
+      --bg-color: #f8fafc;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      margin: 0; padding: 0; color: var(--text-dark);
+    }
+
+    /* 상단 네비게이션 바 */
+    .nav-bar {
+      background: var(--white);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .nav-link { text-decoration: none; color: var(--text-light); font-size: 0.9rem; margin-left: 1.5rem; transition: 0.2s; }
+    .nav-link:hover { color: var(--primary-color); }
+
+    /* 헤더 섹션 */
+    .header {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+      margin-bottom: 40px;
+    }
+
+    .main-logo {
+      font-size: 2.5rem; font-weight: 800; cursor: pointer; color: var(--text-dark);
+      margin: 0; letter-spacing: -1px;
+    }
+    .header p { color: var(--text-light); margin-top: 10px; font-size: 1.1rem; }
+
+    /* 검색창 */
+    .search-wrapper {
+      max-width: 500px; margin: -30px auto 40px;
+      display: flex; gap: 8px; background: white;
+      padding: 8px; border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    .search-input {
+      flex: 1; border: none; padding: 12px 16px; font-size: 1rem; outline: none; border-radius: 12px;
+    }
+    .search-btn {
+      background: var(--primary-color); color: white; border: none;
+      padding: 10px 24px; border-radius: 12px; cursor: pointer;
+      font-weight: 600; transition: 0.2s;
+    }
+    .search-btn:hover { background: var(--secondary-color); transform: scale(1.02); }
+
+    /* 책 그리드 */
     .book-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 30px; max-width: 1200px; margin: 0 auto 60px; padding: 0 20px;
     }
+
     .book-card {
-      background: white; padding: 20px; border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;
-      transition: transform 0.2s; cursor: pointer;
+      background: var(--white); padding: 0; border-radius: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden; display: flex; flex-direction: column; cursor: pointer;
     }
-    .book-card:hover { transform: translateY(-5px); }
-    .book-card img { width: 150px; height: 210px; object-fit: cover; border-radius: 4px; margin-bottom: 15px; }
-    .book-card h3 { margin: 10px 0; font-size: 1.2em; color: #333; }
-    .book-card p { color: #777; font-size: 0.9em; }
+    .book-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+
+    .card-img-wrapper { width: 100%; height: 300px; overflow: hidden; background: #eee; }
+    .book-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .book-card:hover img { transform: scale(1.1); }
+
+    .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    .book-card h3 { margin: 0 0 8px; font-size: 1.1rem; color: var(--text-dark); line-height: 1.4; }
+    .book-card p { color: var(--text-light); font-size: 0.85rem; margin: 4px 0; }
+
     .btn-review {
-      background-color: #4A90E2; color: white; border: none;
-      padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 10px;
+      margin-top: 15px; background: #f1f5f9; color: var(--primary-color);
+      border: none; padding: 10px; border-radius: 10px; font-weight: 600;
+      cursor: pointer; transition: 0.2s;
     }
-    .main-logo { display: inline-block; cursor: pointer; color: #2c3e50; transition: all 0.3s ease; user-select: none; }
-    .main-logo:hover { color: #4A90E2; transform: translateY(-3px); text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.1); }
-    .main-logo:active { transform: scale(0.95); }
+    .btn-review:hover { background: var(--primary-color); color: white; }
 
-    /* 마이페이지 드롭다운 스타일 */
-    .user-menu {
-      position: relative;
-      display: inline-block;
-    }
-
+    /* 마이페이지 드롭다운 */
+    .user-menu { position: relative; }
     .mypage-btn {
-      background-color: #f8f9fa;
-      border: 1px solid #ddd;
-      padding: 5px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9em;
-      margin-left: 10px;
-      transition: background 0.2s;
+      background: #f1f5f9; border: none; padding: 8px 16px;
+      border-radius: 10px; cursor: pointer; font-weight: 600;
     }
-
-    .mypage-btn:hover { background-color: #e2e6ea; }
-
     .dropdown-content {
-      display: none; /* 기본적으로 숨김 */
-      position: absolute;
-      right: 0;
-      background-color: white;
-      min-width: 120px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-      z-index: 1;
-      border-radius: 8px;
-      margin-top: 5px;
-      overflow: hidden;
+      display: none; position: absolute; right: 0; top: 45px;
+      background: white; min-width: 160px; border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); overflow: hidden; z-index: 200;
     }
+    .dropdown-content a { color: var(--text-dark); padding: 12px 16px; text-decoration: none; display: block; font-size: 0.9rem; }
+    .dropdown-content a:hover { background: #f8fafc; color: var(--primary-color); }
+    .show { display: block; animation: fadeIn 0.2s; }
 
-    .dropdown-content a {
-      color: #333;
-      padding: 10px 15px;
-      text-decoration: none;
-      display: block;
-      font-size: 0.9em;
-      text-align: left;
-    }
-
-    .dropdown-content a:hover { background-color: #f1f1f1; }
-
-    /* 클릭 시 보여주는 클래스 */
-    .show { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-<div id="auth-menu" style="background: #fff; padding: 10px; text-align: right; border-bottom: 1px solid #eee;"></div>
+<nav class="nav-bar" id="auth-menu"></nav>
 
 <div class="header">
-  <h1 class="main-logo" onclick="location.href='index.html'">📚 책리뷰 서비스</h1>
-  <p>읽고 싶은 책을 선택하고 리뷰를 남겨보세요.</p>
+  <h1 class="main-logo" onclick="location.href='index.html'">📚 BookReview</h1>
+  <p>취향을 발견하고, 첫 번째 리뷰를 남겨보세요.</p>
 </div>
 
-<div class="search-container" style="text-align: center; margin: 20px 0;">
-  <input type="text" id="searchInput" placeholder="책 제목이나 저자를 입력하세요"
-         style="padding: 10px; width: 300px; border-radius: 5px; border: 1px solid #ddd;">
-  <button onclick="searchBooks()"
-          style="padding: 10px 20px; background-color: #4A90E2; color: white; border: none; border-radius: 5px; cursor: pointer;">
-    검색
-  </button>
+<div class="search-wrapper">
+  <input type="text" id="searchInput" class="search-input" placeholder="책 제목, 저자 검색...">
+  <button class="search-btn" onclick="searchBooks()">검색</button>
 </div>
 
 <div class="book-grid" id="bookGrid"></div>
 
 <script>
-  // 1. 페이지 로드 시 실행되는 함수들
-  document.addEventListener("DOMContentLoaded", function() {
-    updateAuthMenu(); // 로그인 상태 업데이트
-    loadAllBooks();   // 전체 책 목록 로드
+  document.addEventListener("DOMContentLoaded", () => {
+    updateAuthMenu();
+    loadAllBooks();
   });
 
-  // 2. 전체 책 목록 가져오기
   function loadAllBooks() {
     fetch('/api/books')
-            .then(response => response.json())
-            .then(books => displayBooks(books))
-            .catch(err => console.error('데이터 호출 에러:', err));
+      .then(res => res.json())
+      .then(books => displayBooks(books))
+      .catch(err => console.error(err));
   }
 
-  // 3. [핵심] 책 목록을 화면에 그리는 공통 함수
+  // [보안 강화] createElement + textContent 방식으로 변경
   function displayBooks(books) {
     const grid = document.getElementById('bookGrid');
-    grid.innerHTML = ''; // 기존 목록 비우기
+    grid.innerHTML = '';
 
     if (!books || books.length === 0) {
-      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888;">검색 결과가 없습니다.</p>';
+      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light);">검색 결과가 없습니다.</p>';
       return;
     }
 
     books.forEach(book => {
-      const card = `
-        <div class="book-card" onclick="location.href='book-detail.html?bookId=${book.bookId}'">
-            <img src="${book.coverUrl || 'https://via.placeholder.com/150x210'}" alt="표지">
-            <h3>${book.title}</h3>
-            <p>${book.author} | ${book.publisher}</p>
-            <p>장르: ${book.category}</p>
-            <button class="btn-review" onclick="event.stopPropagation(); location.href='review.html?bookId=${book.bookId}'">리뷰 쓰기</button>
-        </div>
-      `;
-      grid.innerHTML += card;
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.onclick = () => location.href = `book-detail.html?bookId=${book.bookId}`;
+
+      const imgWrapper = document.createElement('div');
+      imgWrapper.className = 'card-img-wrapper';
+      const img = document.createElement('img');
+      img.src = book.coverUrl || 'https://via.placeholder.com/220x300';
+      imgWrapper.appendChild(img);
+
+      const content = document.createElement('div');
+      content.className = 'card-content';
+
+      const title = document.createElement('h3');
+      title.textContent = book.title;
+
+      const info = document.createElement('p');
+      info.textContent = `${book.author} | ${book.publisher}`;
+
+      const category = document.createElement('p');
+      category.textContent = `장르: ${book.category}`;
+
+      const btn = document.createElement('button');
+      btn.className = 'btn-review';
+      btn.textContent = '리뷰 쓰기';
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        location.href = `review.html?bookId=${book.bookId}`;
+      };
+
+      content.append(title, info, category, btn);
+      card.append(imgWrapper, content);
+      grid.appendChild(card);
     });
   }
 
-  // 4. 검색 기능 (jQuery 없이 fetch로 구현)
   function searchBooks() {
-    const keyword = document.getElementById('searchInput').value;
-
-    if (!keyword.trim()) {
-      alert("검색어를 입력해주세요!");
-      loadAllBooks(); // 검색어 없으면 전체 목록 다시 보여주기
-      return;
-    }
+    const keyword = document.getElementById('searchInput').value.trim();
+    if (!keyword) { loadAllBooks(); return; }
 
     fetch(`/api/books/search?keyword=${encodeURIComponent(keyword)}`)
-            .then(response => response.json())
-            .then(books => {
-              displayBooks(books); // 검색 결과를 공통 함수로 전달
-            })
-            .catch(err => {
-              console.error("검색 에러:", err);
-              alert("검색 중 오류가 발생했습니다.");
-            });
+      .then(res => res.json())
+      .then(books => displayBooks(books));
   }
 
-  // 엔터키 검색 이벤트
-  document.getElementById('searchInput').addEventListener('keypress', function (e) {
+  document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') searchBooks();
   });
 
-  // 로그인 메뉴 업데이트
   function updateAuthMenu() {
     const authMenu = document.getElementById('auth-menu');
-    const userData = sessionStorage.getItem('user');
+    const user = JSON.parse(sessionStorage.getItem('user'));
 
-    if (userData) {
-      const user = JSON.parse(userData);
+    if (user) {
       authMenu.innerHTML = `
-            <span><strong>${user.nickname}</strong>님 환영합니다!</span> |
-            <a href="#" onclick="logout()" style="color: red; text-decoration: none;">로그아웃</a>
-        `;
+        <div class="user-menu">
+          <button class="mypage-btn" onclick="toggleDropdown()">${user.nickname}님 마이페이지 ▾</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="account-settings.html">⚙️ 계정 관리</a>
+            <a href="#" onclick="logout()" style="color: #ef4444;">🚪 로그아웃</a>
+          </div>
+        </div>
+      `;
     } else {
       authMenu.innerHTML = `
-            <a href="login.html">로그인</a> |
-            <a href="join.html">회원가입</a>
-        `;
+        <a href="login.html" class="nav-link">로그인</a>
+        <a href="join.html" class="nav-link" style="color: var(--primary-color); font-weight: 700;">회원가입</a>
+      `;
     }
   }
 
-  function logout() {
-    sessionStorage.removeItem('user');
-    localStorage.removeItem('loggedInUserId');
-    alert("로그아웃 되었습니다.");
-    location.reload();
-  }
+  function toggleDropdown() { document.getElementById("myDropdown").classList.toggle("show"); }
+  function logout() { sessionStorage.clear(); location.reload(); }
 
-  function updateAuthMenu() {
-    const authMenu = document.getElementById('auth-menu');
-    const userData = sessionStorage.getItem('user');
-
-    if (userData) {
-      const user = JSON.parse(userData);
-      authMenu.innerHTML = `
-            <div class="user-menu">
-                <span><strong>${user.nickname}</strong>님 환영합니다!</span>
-                <button class="mypage-btn" onclick="toggleDropdown()">마이페이지 ▾</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <a href="account-settings.html">⚙️ 계정 관리</a>
-                    <a href="#" onclick="logout()" style="color: red;">🚪 로그아웃</a>
-                </div>
-            </div>
-        `;
-    } else {
-      authMenu.innerHTML = `
-            <a href="login.html" style="text-decoration: none; color: #666;">로그인</a> |
-            <a href="join.html" style="text-decoration: none; color: #666;">회원가입</a>
-        `;
-    }
-  }
-
-  // 드롭다운 토글 함수
-  function toggleDropdown() {
-    document.getElementById("myDropdown").classList.toggle("show");
-  }
-
-  // 메뉴 바깥 클릭 시 드롭다운 닫기
-  window.onclick = function(event) {
-    if (!event.target.matches('.mypage-btn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      for (var i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
+  window.onclick = (e) => {
+    if (!e.target.matches('.mypage-btn')) {
+      const dropdowns = document.getElementsByClassName("dropdown-content");
+      for (let d of dropdowns) { if (d.classList.contains('show')) d.classList.remove('show'); }
     }
   }
 </script>
-
 </body>
 </html>

@@ -2,109 +2,163 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>북리뷰 - 로그인</title>
+    <title>로그인 | BookReview</title>
     <style>
-        /* 기본 배경 설정 */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f1f5f9;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Pretendard', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: var(--text-main);
         }
 
         /* 로그인 카드 박스 */
         .login-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            background-color: var(--white);
+            padding: 50px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             width: 100%;
             max-width: 400px;
             text-align: center;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .login-container h2 {
-            margin-bottom: 24px;
-            color: #333;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0 0 10px 0;
+            letter-spacing: -1.5px;
+            cursor: pointer;
+        }
+
+        .login-header p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            margin-bottom: 35px;
         }
 
         /* 입력창 스타일 */
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #666;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            padding-left: 4px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box; /* 패딩이 너비에 포함되게 함 */
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.2s ease;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #4A90E2;
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         /* 버튼 스타일 */
         button {
             width: 100%;
-            padding: 14px;
-            background-color: #4A90E2;
+            padding: 16px;
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
         }
 
         button:hover {
-            background-color: #357ABD;
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* 링크 스타일 */
         .footer-link {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #888;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
         }
 
         .footer-link a {
-            color: #4A90E2;
+            color: var(--primary);
             text-decoration: none;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
 <div class="login-container">
-    <h2>Bookr 로그인</h2>
+    <div class="login-header">
+        <h1 onclick="location.href='index.html'">📚 BookReview</h1>
+        <p>당신의 독서 기록을 다시 만나보세요.</p>
+    </div>
+
     <form id="loginForm">
         <div class="input-group">
-            <label for="email">이메일</label>
+            <label for="email">이메일 주소</label>
             <input type="email" id="email" placeholder="example@mail.com" required>
         </div>
         <div class="input-group">
             <label for="password">비밀번호</label>
-            <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+            <input type="password" id="password" placeholder="••••••••" required>
         </div>
-        <button type="submit" id="loginBtn">로그인</button>
+        <button type="submit" id="loginBtn">로그인하기</button>
     </form>
+
     <div class="footer-link">
-        계정이 없으신가요? <a href="join.html">회원가입</a>
+        아직 회원이 아니신가요? <a href="join.html">회원가입</a>
     </div>
 </div>
 
@@ -113,6 +167,7 @@
         e.preventDefault();
 
         const btn = document.getElementById('loginBtn');
+        const originalText = btn.innerText;
         btn.innerText = '로그인 중...';
         btn.disabled = true;
 
@@ -126,24 +181,24 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
-            .then(response => response.json()) // JSON이 아닌 텍스트로 먼저 받습니다.
-            .then(user => {
-                // 1. 서버가 보내준 user 객체를 세션에서 저장 (이제 userId가 포함됩니다!)
-                sessionStorage.setItem('user', JSON.stringify(user));
-
-                // 2. 알림창에는 닉네임만 예쁘게 보여줍니다.
-                alert(`${user.nickname}님, 환영합니다!`);
-
-                // 3. 메인 페이지로 이동
-                location.href = 'index.html';
-            })
-            .catch(err => {
-                alert('서버 에러가 발생했습니다.');
-                btn.innerText = '로그인';
-                btn.disabled = false;
-            });
+        .then(response => {
+            if (!response.ok) {
+                // 로그인 실패 시 (401 등) 에러 메시지 처리
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
+        .then(user => {
+            sessionStorage.setItem('user', JSON.stringify(user));
+            alert(`${user.nickname}님, 환영합니다! ✨`);
+            location.href = 'index.html';
+        })
+        .catch(err => {
+            alert(err.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
     });
-
 </script>
 
 </body>

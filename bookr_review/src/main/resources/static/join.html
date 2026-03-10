@@ -1,21 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>회원가입 테스트</title>
+    <title>회원가입 | BookReview</title>
+    <style>
+        :root {
+          --primary: #6366f1;
+          --primary-hover: #4f46e5;
+          --bg: #f1f5f9;
+          --white: #ffffff;
+          --text-main: #1e293b;
+          --text-sub: #64748b;
+        }
+
+        body {
+          font-family: 'Pretendard', sans-serif;
+          background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          margin: 0;
+          color: var(--text-main);
+        }
+
+        .join-container {
+          background: var(--white);
+          padding: 50px 40px;
+          border-radius: 24px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          width: 100%;
+          max-width: 400px;
+          animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .join-header { text-align: center; margin-bottom: 40px; }
+        .join-header h1 { font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--primary); letter-spacing: -1px; }
+        .join-header p { color: var(--text-sub); margin-top: 10px; font-size: 0.95rem; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; margin-left: 4px; }
+
+        .input-field {
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 1rem;
+          box-sizing: border-box;
+          transition: all 0.2s ease;
+          background: #f8fafc;
+        }
+
+        .input-field:focus {
+          outline: none;
+          border-color: var(--primary);
+          background: white;
+          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-field::placeholder { color: #cbd5e1; }
+
+        .submit-btn {
+          width: 100%;
+          padding: 16px;
+          background: var(--primary);
+          color: white;
+          border: none;
+          border-radius: 12px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+          background: var(--primary-hover);
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        .footer-links {
+          text-align: center;
+          margin-top: 25px;
+          font-size: 0.9rem;
+          color: var(--text-sub);
+        }
+
+        .footer-links a {
+          color: var(--primary);
+          text-decoration: none;
+          font-weight: 700;
+          margin-left: 5px;
+        }
+
+        .footer-links a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
-<h2>회원가입</h2>
-<form id="joinForm">
-    이메일: <input type="email" id="email" required><br>
-    비밀번호: <input type="password" id="password" required><br>
-    닉네임: <input type="text" id="nickname" required><br>
-    <button type="submit">가입하기</button>
-</form>
+
+<div class="join-container">
+    <div class="join-header">
+        <h1 onclick="location.href='index.html'" style="cursor:pointer">📚 BookReview</h1>
+        <p>새로운 독서 여정을 시작해보세요.</p>
+    </div>
+
+    <form id="joinForm">
+        <div class="form-group">
+            <label for="email">이메일 주소</label>
+            <input type="email" id="email" class="input-field" placeholder="example@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" class="input-field" placeholder="8자 이상 입력해주세요" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" class="input-field" placeholder="활동할 이름을 정해주세요" required>
+        </div>
+
+        <button type="submit" class="submit-btn">계정 만들기</button>
+    </form>
+
+    <div class="footer-links">
+        이미 회원이신가요? <a href="login.html">로그인하기</a>
+    </div>
+</div>
 
 <script>
     document.getElementById('joinForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // 페이지 새로고침 방지
+        e.preventDefault();
 
         const data = {
             email: document.getElementById('email').value,
@@ -23,16 +145,25 @@
             nickname: document.getElementById('nickname').value
         };
 
-        // 우리가 만든 UserController의 /api/users/join으로 데이터를 보냅니다.
         fetch('/api/users/join', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
-            .then(response => response.text())
-            .then(msg => alert(msg))
-            .catch(err => alert('에러 발생!'));
+        .then(response => {
+            // 우리가 수정한 컨트롤러는 ResponseEntity<String>을 반환하므로 상태코드 체크 가능
+            if (response.ok) return response.text();
+            return response.text().then(text => { throw new Error(text) });
+        })
+        .then(msg => {
+            alert("환영합니다! 회원가입이 완료되었습니다. 🎉");
+            location.href = 'login.html';
+        })
+        .catch(err => {
+            alert(err.message || '가입 도중 오류가 발생했습니다.');
+        });
     });
 </script>
+
 </body>
 </html>
